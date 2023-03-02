@@ -16,7 +16,7 @@ $(SERVER) : ${OBJS} server.o
 	$(GCC) $(CFLAGS) $(SRCS) server.o -o $(SERVER)
 
 $(CLIENT) : $(OBJS) client.o
-	$(GCC) $(CFLAGS) $(SRCS) client.o -o $(CLIENT)
+	$(GCC) $(CFLAGS) -lreadline $(SRCS) client.o -o $(CLIENT)
 
 clean :
 	${RM} ${OBJS} server.o client.o
