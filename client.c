@@ -1,64 +1,58 @@
 #include "server_client.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <arpa/inet.h>
-
 int main(int argc , char **argv)
 {
-    (void)argc;
-    (void)argv;
+	(void)argc;
 	int sock;
     const char *ip = argv[1];
     int port = atoi(argv[2]);
-    printf("_%d_\n", port);
+
 	struct sockaddr_in server;
-	char message[1000] , server_reply[2000];
+	char message[2000] , server_reply[2000];
 	
 	sock = socket(AF_INET , SOCK_STREAM , 0);
 	if (sock == -1)
 	{
 		printf("Could not create socket");
 	}
-	puts("Socket created");
-	
+	// printf("Socket created\n");
 	server.sin_addr.s_addr = inet_addr(ip);
 	server.sin_family = AF_INET;
-	server.sin_port = htons(8080);
+	server.sin_port = htons(port);
 
-	if (connect(sock , (struct sockaddr *)&server , sizeof(server)) < 0)
+	if (connect(sock, (struct sockaddr *)&server , sizeof(server)) < 0)
 	{
 		perror("connect failed. Error");
 		return 1;
 	}
-	
-	puts("Connected\n");
-
+	// printf("Connected\n");
 	while(1)
 	{
-        printf(ESC_GREEN);
-		printf("Client> ");
-        printf(ESC_WHITE);
+		printf(ESC_GREEN"Client> "ESC_WHITE);
+		bzero(message, strlen(message));
 		scanf("%s" , message);
 		
 		if( send(sock , message , strlen(message) , 0) < 0)
 		{
-			puts("Send failed");
+			printf("Send failed\n");
 			return 1;
 		}
-		
+		bzero(server_reply, strlen(server_reply));
 		if( recv(sock , server_reply , 2000 , 0) < 0)
 		{
-			puts("recv failed");
+			printf("recv failed\n");
 			break;
 		}
-		
-		puts("Server reply :");
-		puts(server_reply);
+		printf("serv_repl is %s\n", server_reply);
+		if (!strncmp(server_reply, "disconnect", 10))
+		{
+			printf("eeey Client disconnected\n");
+			// close(sock);
+			fflush(stdout);
+			break;
+		}
+		// printf("%s\n", server_reply);
 	}
-	
 	close(sock);
 	return 0;
 }

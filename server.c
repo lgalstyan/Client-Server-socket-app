@@ -57,57 +57,69 @@ int main(int argc , char **argv, char **env)
 {
     (void)argc;
     (void)argv;
-	int socket_desc , client_sock , c , read_size;
-	struct sockaddr_in server , client;
+    (void)env;
+	int flag = 0;
+	int socket_desc;
+	int client_desc;
+	int c;
+	int read_size;
+	struct sockaddr_in server;
+	struct sockaddr_in client;
 	char client_message[2000];
 	
 	socket_desc = socket(AF_INET , SOCK_STREAM , 0);
 	if (socket_desc == -1)
 	{
-		printf("Could not create socket");
+		printf("Error: could not create socket\n");
 	}
-	puts("Socket created");
+	printf("Socket created\n");
 	
 	server.sin_family = AF_INET;
 	server.sin_addr.s_addr = INADDR_ANY;
-	server.sin_port = htons( 8888 );
+	server.sin_port = htons(8080);
 	
-	if( bind(socket_desc,(struct sockaddr *)&server , sizeof(server)) < 0)
+	if(bind(socket_desc,(struct sockaddr *)&server , sizeof(server)) < 0)
 	{
-		perror("bind failed. Error");
-		return 1;
+		perror("Error: bind failed!");
+		return (1);
 	}
-	puts("bind done");
-	
 	listen(socket_desc , 5);
-	
-	puts("Waiting for incoming connections...");
+	printf("Waiting for incoming connections...\n");
 	c = sizeof(struct sockaddr_in);
 	
-	client_sock = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c);
-	if (client_sock < 0)
+	client_desc = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c);
+	if (client_desc < 0)
 	{
-		perror("accept failed");
-		return 1;
+		perror("Error: accept failed");
+		return (1);
 	}
-	puts("Connection accepted");
-	
-	while( (read_size = recv(client_sock , client_message , 2000 , 0)) > 0 )
+	printf("Connection accepted\n");
+    bzero(client_message, strlen(client_message));
+	// write(client_desc, client_message , strlen(client_message));
+	while( (read_size = recv(client_desc , client_message , 2000 , 0)) > 0 )
 	{
-		write(client_sock , client_message , strlen(client_message));
-	    if(read_size == 0 || !ft_strcmp(client_message, "disconnect"))
-	    {
-	    	puts("Client disconnected");
-	    	fflush(stdout);
-	    }
-		write(client_sock , ft_exec(client_message, env) , strlen(client_message));
+			printf("client message is:%s:\n", client_message);
+		if (!strncmp(client_message, "disconnect", 10))
+		{
+			flag = 1;
+			// send(client_desc, client_message, strlen(client_message), 0);
+			write(client_desc, "Disconnection\n", 15);
+			printf("Closed\n");
+			close(client_desc);
+			break;
+		} else
+			write(client_desc, client_message, strlen(client_message));
         bzero(client_message, strlen(client_message));
 	}
-	
-	if(read_size == -1)
+	if(!flag && read_size == 0)
+	{
+		printf("Client disconnected\n");
+		// fflush(stdout);
+	}
+	else if(!flag && read_size == -1)
 	{
 		perror("recv failed");
 	}
-	
+	close(client_desc);
 	return 0;
 }
