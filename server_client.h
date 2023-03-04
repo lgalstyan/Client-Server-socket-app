@@ -17,6 +17,6 @@ int     ft_strcmp(char *s1, char *s2);
 char	**ft_split(char const *s, char c);
 char    **ft_split_2_part(char *s, char c);
 char	*ft_strjoin(char *s1, char *s2);
-void    ft_exec(char **buff, char **env, int client_fd);
+void    ft_exec(char **buff, char **env);
 char    *ft_clean_quotes(char *str);
 #endif
