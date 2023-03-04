@@ -1,5 +1,27 @@
 #include "server_client.h"
 
+char *ft_clean_quots(char *str)
+{
+	unsigned int	i;
+	char *res;
+
+	i = 1;
+	// while (str && str[i] && str[i] != '\"')
+	// 	i++;
+	printf("in ft_clean str  %s\n", str);
+	res = malloc(sizeof(char) * (strlen(str) - i - 1));
+	while(str && str[i] && ((i + 1) < strlen(str)) && str[i] != '\"')
+	{
+		puts(&str[i]);
+		res[i] = str[i];
+		i++;
+	}
+	res[i] = '\0';
+	// free(str);
+	printf("in ft_clean res  %s\n", res);
+	return (res);
+}
+
 char	*ft_strjoin(char *s1, char *s2)
 {
 	int		i;
@@ -119,4 +141,57 @@ char	**ft_split(char const *s, char c)
 	}
 	tab[i] = 0;
 	return (tab);
+}
+
+
+char	*accses_to_exec(char *cmd, char *path)
+{
+	int		i;
+	char	**token;
+	char	*cmd_accs;
+	char	*tmp;
+
+	i = 0;
+	tmp = NULL;
+	token = ft_split(path, ':');
+	if (cmd[0] != '.')
+	{
+		tmp = ft_strjoin("/", cmd);
+		cmd = tmp;
+	}
+	while (token[i])
+	{
+		cmd_accs = ft_strjoin(token[i], cmd);
+		if (access(cmd_accs, 0) == 0)
+			return (cmd_accs);
+		i++;
+	}
+	return (cmd);
+}
+
+static int	child_proc(char *cmd, char **env)
+{
+	char	*path;
+	char	*cmd_acces;
+	int		ret;
+
+	path = "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/munki";
+	cmd_acces = accses_to_exec(cmd, path);
+	if (cmd[0] == '/' || cmd[0] == '.')
+		ret = execve(cmd_acces, &cmd, env);
+	else
+		ret = execve(cmd_acces, &cmd, env);
+	return (ret);
+}
+
+char *ft_exec(char *buff, char **env)
+{
+    int pid;
+
+    pid = fork();
+	if (pid == 0)
+	{
+		child_proc(buff, env);
+    }
+    return (buff);
 }
