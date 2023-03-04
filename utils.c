@@ -205,15 +205,12 @@ static int	child_proc(char **cmd, char **env)
 	return (ret);
 }
 
-void	ft_exec(char **buff, char **env, int client_fd)
+void	ft_exec(char **buff, char **env)
 {
     int pid;
-	(void)client_fd;
-	// dup2(client_fd, 1);
     pid = fork();
 	if (pid == 0)
 	{
 		child_proc(buff, env);
     }
-	// dup2(1, client_fd);
 }
