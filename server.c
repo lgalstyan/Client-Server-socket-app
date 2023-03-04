@@ -4,7 +4,6 @@ int main(int argc , char **argv, char **env)
 {
     (void)argc;
     (void)argv;
-    (void)env;
 	int socket_desc;
 	int client_desc;
 	int c;
@@ -47,7 +46,7 @@ int main(int argc , char **argv, char **env)
 			{
 				char **a = ft_split(ft_clean_quotes(token[1]), ' ');
 				dup2(client_desc, 1);
-				ft_exec(a, env, client_desc);
+				ft_exec(a, env);
 				dup2(1, client_desc);
 			}
 			else
@@ -65,7 +64,6 @@ int main(int argc , char **argv, char **env)
 			perror("recv failed");
 		}
 	}
-	// close(client_desc);
 	return 0;
 }
 

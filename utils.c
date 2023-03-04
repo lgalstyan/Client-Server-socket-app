@@ -1,24 +1,21 @@
 #include "server_client.h"
 
-char *ft_clean_quots(char *str)
+char *ft_clean_quotes(char *str)
 {
-	unsigned int	i;
-	char *res;
+	unsigned int	i, j;
+	char 			*res;
 
 	i = 1;
-	// while (str && str[i] && str[i] != '\"')
-	// 	i++;
-	printf("in ft_clean str  %s\n", str);
+	j = 0;
 	res = malloc(sizeof(char) * (strlen(str) - i - 1));
 	while(str && str[i] && ((i + 1) < strlen(str)) && str[i] != '\"')
 	{
-		puts(&str[i]);
-		res[i] = str[i];
+		res[j] = str[i];
 		i++;
+		j++;
 	}
-	res[i] = '\0';
+	res[j] = '\0';
 	// free(str);
-	printf("in ft_clean res  %s\n", res);
 	return (res);
 }
 
@@ -143,6 +140,28 @@ char	**ft_split(char const *s, char c)
 	return (tab);
 }
 
+char **ft_split_2_part(char *s, char c)
+{
+	char	**tab;
+	size_t	start;
+	size_t	end;
+
+	start = 0;
+	end = 0;
+	tab = malloc(sizeof(char *) * 3);
+	if (!(tab) || !s)
+		return (0);
+	while (s[start] && s[start] == c)
+		start++;
+	end = start;
+	while (s[end] && s[end] != c)
+		end++;
+	tab[0] = tokenize(s, start, end - start);
+	if (s && s[end] && s[end + 1])
+		tab[1] = tokenize(s, end + 1, strlen(s) - end);
+	tab[2] = 0;
+	return (tab);
+}
 
 char	*accses_to_exec(char *cmd, char *path)
 {
@@ -169,29 +188,32 @@ char	*accses_to_exec(char *cmd, char *path)
 	return (cmd);
 }
 
-static int	child_proc(char *cmd, char **env)
+static int	child_proc(char **cmd, char **env)
 {
 	char	*path;
 	char	*cmd_acces;
 	int		ret;
 
 	path = "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/munki";
-	cmd_acces = accses_to_exec(cmd, path);
-	if (cmd[0] == '/' || cmd[0] == '.')
-		ret = execve(cmd_acces, &cmd, env);
+	cmd_acces = accses_to_exec(cmd[0], path);
+	if (cmd[0][0] == '/' || cmd[0][0] == '.')
+		ret = execve(cmd_acces, cmd, env);
 	else
-		ret = execve(cmd_acces, &cmd, env);
+		ret = execve(cmd_acces, cmd, env);
+	if (ret < 0)
+		printf("Command not found!");
 	return (ret);
 }
 
-char *ft_exec(char *buff, char **env)
+void	ft_exec(char **buff, char **env, int client_fd)
 {
     int pid;
-
+	(void)client_fd;
+	// dup2(client_fd, 1);
     pid = fork();
 	if (pid == 0)
 	{
 		child_proc(buff, env);
     }
-    return (buff);
+	// dup2(1, client_fd);
 }
