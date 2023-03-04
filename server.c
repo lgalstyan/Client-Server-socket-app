@@ -40,10 +40,8 @@ int main(int argc , char **argv, char **env)
 			perror("Error: accept failed");
 			return (1);
 		}
-		// printf("Connection accepted\n");
 		while ((read_size = recv(client_desc, client_message, 2000, 0)) > 0)
 		{
-			// printf("message %s\n", client_message);
 			token = ft_split_2_part(client_message, ' ');
 			if (token[0] && token[1] && !strncmp(token[0], "shell", 5) && token[1][0] == '\"')
 			{
