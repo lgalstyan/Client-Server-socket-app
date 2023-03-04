@@ -13,7 +13,9 @@
 # define ESC_GREEN          "\001\033[0;32m\002"
 # define ESC_WHITE 		    "\001\033[0;37m\002"
 
-int	ft_strcmp(char *s1, char *s2);
+int     ft_strcmp(char *s1, char *s2);
 char	**ft_split(char const *s, char c);
 char	*ft_strjoin(char *s1, char *s2);
+char    *ft_exec(char *buff, char **env);
+char    *ft_clean_quots(char *str);
 #endif
