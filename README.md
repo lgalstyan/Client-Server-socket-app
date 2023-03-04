@@ -37,3 +37,21 @@ Client Requirements:
   b. disconnect
   
   c. shell “COMMAND”
+
+  USAGE
+
+  1) make
+
+  2)./server
+
+  3) ./client "127.0.0.1" "4242" 
+    for localhost
+    or for you ip_address "ifconfig | grep inet" 
+    ./client "IP_ADDRESS" "4242"
+  
+  4) shell "shell_command"
+    for example shell "ls -la"
+
+  5)disconnect (or crtl+c)
+    for close the connection with the Client
+
