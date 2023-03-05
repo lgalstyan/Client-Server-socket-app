@@ -9,7 +9,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-# define PORT               8080
+# define PORT               1111
 # define ESC_GREEN          "\001\033[0;32m\002"
 # define ESC_WHITE 		    "\001\033[0;37m\002"
 
