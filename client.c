@@ -1,24 +1,15 @@
 #include "server_client.h"
 
-int main(int argc , char **argv)
+int	create_connect(const char *ip, const int port)
 {
-	(void)argc;
-	if (argc != 3)
-	{
-		printf("IP and port arguments should be\n");
-		return (1);
-	}
 	int sock;
-    const char *ip = argv[1];
-    int port = atoi(argv[2]);
-	char *message = NULL;
-	char server_reply[2000];
 	struct sockaddr_in server;
-	
-	sock = socket(AF_INET , SOCK_STREAM , 0);
+
+	sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (sock == -1)
 	{
-		printf("Could not create socket");
+		perror("Could not create socket");
+		return(-3);
 	}
 	server.sin_addr.s_addr = inet_addr(ip);
 	server.sin_family = AF_INET;
@@ -27,33 +18,59 @@ int main(int argc , char **argv)
 	if (connect(sock, (struct sockaddr *)&server , sizeof(server)) < 0)
 	{
 		perror("connect failed. Error");
+		return (-3);
+	}
+	return (sock);
+}	
+
+int main(int argc , char **argv)
+{
+	(void)argc;
+	if (argc != 3)
+	{
+		write(1, "IP and port arguments should be\n", 33);
 		return (1);
 	}
+	int sock;
+    const char *ip = argv[1];
+    const int port = atoi(argv[2]);
+	char *message = NULL;
+	char server_reply[2000];
+	
+	sock = create_connect(ip, port);
+	if (sock < 0)
+		return (1);
 	while(1)
 	{
-		message = NULL;
 		message = readline(ESC_GREEN "Client> " ESC_WHITE);
-		add_history(message);
+		if (message[0])
+			add_history(message);
+		else
+		{
+			free(message);
+			continue ;
+		}
 		if( send(sock, message, strlen(message), 0) < 0)
 		{
-			printf("Send failed\n");
+			perror("Send failed");
 			return (1);
 		}
 		bzero(server_reply, strlen(server_reply));
 		if( recv(sock , server_reply , 2000 , 0) < 0)
 		{
-			printf("recv failed\n");
+			perror("recv failed");
+			break;
+		}
+		if (!strncmp(server_reply, "disconnect", 10))
+		{
+			write(1, "Client disconnected\n", 21);
 			break;
 		}
 		write(1, server_reply, strlen(server_reply));
-		if (!strncmp(server_reply, "disconnect", 10))
-		{
-			printf("Client disconnected\n");
-			break;
-		}
+		// write(1, "\n", 1);
 		free(message);
 		message = NULL;
 	}
-	// close(sock);
+	close(sock);
 	return (0);
 }
