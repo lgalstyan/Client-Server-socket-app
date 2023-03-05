@@ -15,7 +15,6 @@ char *ft_clean_quotes(char *str)
 		j++;
 	}
 	res[j] = '\0';
-	// free(str);
 	return (res);
 }
 
@@ -39,24 +38,6 @@ char	*ft_strjoin(char *s1, char *s2)
 		str[j++] = s2[i++];
 	str[j] = '\0';
 	return (str);
-}
-
-int	ft_strcmp(char *s1, char *s2)
-{
-	int	i;
-
-	i = 0;
-	while (s1[i] || s2[i])
-	{
-		if (s1[i] != s2[i])
-		{
-			return ((int)((unsigned char)s1[i] - (unsigned char)s2[i]));
-		}
-		if (s1[i] == '\0')
-			return ((-1) * s2[i]);
-		i++;
-	}
-	return (0);
 }
 
 static size_t	cnt_word(char const *str, char delim)
@@ -140,6 +121,18 @@ char	**ft_split(char const *s, char c)
 	return (tab);
 }
 
+static int	len_for_qouts(char *s)
+{
+	int	i;
+
+	i = 0;
+	while (s && s[i] && s[i] != '\"')
+	{
+		i++;
+	}
+	return (i);
+}
+
 char **ft_split_2_part(char *s, char c)
 {
 	char	**tab;
@@ -158,7 +151,7 @@ char **ft_split_2_part(char *s, char c)
 		end++;
 	tab[0] = tokenize(s, start, end - start);
 	if (s && s[end] && s[end + 1])
-		tab[1] = tokenize(s, end + 1, strlen(s) - end);
+		tab[1] = tokenize(s, end + 1, len_for_qouts(s + end + 2) + 2);
 	tab[2] = 0;
 	return (tab);
 }
@@ -188,21 +181,22 @@ char	*accses_to_exec(char *cmd, char *path)
 	return (cmd);
 }
 
-static int	child_proc(char **cmd, char **env)
+static void	child_proc(char **cmd, char **env)
 {
 	char	*path;
 	char	*cmd_acces;
 	int		ret;
 
+	ret = 0;
 	path = "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/munki";
 	cmd_acces = accses_to_exec(cmd[0], path);
 	if (cmd[0][0] == '/' || cmd[0][0] == '.')
-		ret = execve(cmd_acces, cmd, env);
+		ret = execve(cmd[0], cmd, env);
 	else
 		ret = execve(cmd_acces, cmd, env);
 	if (ret < 0)
-		printf("Command not found!");
-	return (ret);
+		perror("Command not found!");
+	exit (1);
 }
 
 void	ft_exec(char **buff, char **env)
