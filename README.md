@@ -38,18 +38,22 @@ Client Requirements:
   
   c. shell “COMMAND”
 
-  USAGE
+  ## USAGE
 
-  1) make
+  1)make
+
+  if 'readline/readline.h' file not found
+  install this
+  sudo apt-get install libreadline-dev 
 
   2)./server
 
-  3) ./client "127.0.0.1" "4242" 
+  3)./client "127.0.0.1" "4242" 
     for localhost
     or for you ip_address "ifconfig | grep inet" 
     ./client "IP_ADDRESS" "4242"
   
-  4) shell "shell_command"
+  4)shell "shell_command"
     for example shell "ls -la"
 
   5)disconnect (or crtl+c)
