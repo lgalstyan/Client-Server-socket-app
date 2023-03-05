@@ -53,7 +53,8 @@ static void	child_proc(int client_desc, char **env)
 	char client_message[2000];
 	
 	token = NULL;
-    bzero(client_message, strlen(client_message));
+	// client_message[2000] = "";
+    // bzero(client_message, strlen(client_message));
 	while ((read_size = recv(client_desc, client_message, 2000, 0)) > 0)
 	{
 		token = ft_split_2_part(client_message, ' ');
