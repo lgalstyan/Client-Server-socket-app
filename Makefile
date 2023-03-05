@@ -1,29 +1,36 @@
 SERVER	= server
 CLIENT	= client
 
-SRCS 		= utils.c
-OBJS		= $(SRCS:.c=.o)
+SRCS 		= $(wildcard ./*.c)
+OBJS		= $(patsubst ./%.c, ./%.o, $(SRCS))
 GCC 		= gcc
 CFLAGS		= -Wall -Werror -Wextra
 RM			= rm -rf
 
-# %.o : %.c
-# 	${GCC} ${CFLAGS} -I server_client.h -c $< -o ${<:.c=.o}
-
 all: $(SERVER) $(CLIENT)
 
-$(SERVER) : ${OBJS} server.o
-	$(GCC) $(CFLAGS) $(SRCS) server.o -o $(SERVER)
+%.o: %.c
+	@$(GCC) $(CFLAGS) -I. -o $@ -c $<
 
-$(CLIENT) : $(OBJS) client.o
-	$(GCC) $(CFLAGS) -lreadline $(SRCS) client.o -o $(CLIENT)
+$(SERVER) : ${OBJS}
+	@$(GCC) $(CFLAGS) utils.o server.o -o $(SERVER)
+	@echo "$(GRN)$(NAME) Server compiled$(DEF)"
+
+
+$(CLIENT) : $(OBJS)
+	@$(GCC) $(CFLAGS) utils.o client.o -lreadline -o $(CLIENT)
+	@echo "$(GRN)$(NAME) Client compiled$(DEF)"
 
 clean :
-	${RM} ${OBJS} server.o client.o
+	@${RM} ${OBJS}
 
 fclean: clean
-	${RM} ${CLIENT} ${SERVER}
+	@${RM} ${CLIENT} ${SERVER}
+	@echo "$(BLU)$(NAME) Deleted$(DEF)"
 
 re : fclean all
 
 .PHONY: all clean fclean re
+
+GRN = \033[0;32m
+BLU = \033[0;34m
