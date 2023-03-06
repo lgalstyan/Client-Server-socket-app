@@ -43,7 +43,7 @@ int main(int argc , char **argv, char **env)
 			perror("Error: accept failed");
 			return (1);
 		}
-		write (1, ESC_GREEN"Client has successfully connected.\n", 46);
+		write (1, ESC_GREEN"Client has successfully connected.\n"ESC_WHITE, 54);
 		childpid = fork();
 		if (childpid == 0)
 		{
@@ -58,6 +58,7 @@ static void	child_proc(int client_desc, char **env)
 	int read_size;
 	char **token;
 	char client_message[2000];
+	int	output = dup(1);
 	
 	token = NULL;
 	while ((read_size = recv(client_desc, client_message, 2000, 0)) > 0)
@@ -77,7 +78,7 @@ static void	child_proc(int client_desc, char **env)
 	}
 	if(read_size == 0)
 	{
-		write(1, "Client disconnected\n", 20);
+		write(output, "Client disconnected\n", 21);
 		return ;
 	}
 	else if(read_size == -1)
