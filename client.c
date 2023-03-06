@@ -63,7 +63,7 @@ int main(int argc , char **argv)
 		}
 		if (!strncmp(server_reply, "disconnect", 10))
 		{
-			write(1, "Client disconnected\n", 21);
+			write(1, "Disconnected\n", 14);
 			break;
 		}
 		write(1, server_reply, strlen(server_reply));
