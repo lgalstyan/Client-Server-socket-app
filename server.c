@@ -43,7 +43,7 @@ int main(int argc , char **argv, char **env)
 			perror("Error: accept failed");
 			return (1);
 		}
-		write (1, ESC_GREEN"Client has successfully connsected.\n", 46);
+		write (1, ESC_GREEN"Client has successfully connected.\n", 46);
 		childpid = fork();
 		if (childpid == 0)
 		{
