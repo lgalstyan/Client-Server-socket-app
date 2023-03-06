@@ -43,6 +43,7 @@ int main(int argc , char **argv, char **env)
 			perror("Error: accept failed");
 			return (1);
 		}
+		write (1, ESC_GREEN"Client has successfully connsected.\n", 46);
 		childpid = fork();
 		if (childpid == 0)
 		{
@@ -59,8 +60,6 @@ static void	child_proc(int client_desc, char **env)
 	char client_message[2000];
 	
 	token = NULL;
-	// client_message[2000] = "";
-    // bzero(client_message, strlen(client_message));
 	while ((read_size = recv(client_desc, client_message, 2000, 0)) > 0)
 	{
 		token = ft_split_2_part(client_message, ' ');
