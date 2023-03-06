@@ -22,6 +22,12 @@ int main(int argc , char **argv, char **env)
 	server.sin_family = AF_INET;
 	server.sin_addr.s_addr = INADDR_ANY;
 	server.sin_port = htons(PORT);
+	int optival = 1;
+	if (setsockopt(socket_desc, SOL_SOCKET, SO_REUSEADDR, &optival, sizeof(optival)) < 0)
+	{
+		perror("setsocket");
+		exit(1);
+	}
 	if(bind(socket_desc,(struct sockaddr *)&server , sizeof(server)) < 0)
 	{
 		perror("Error: bind failed!");
