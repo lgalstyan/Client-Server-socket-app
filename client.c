@@ -23,17 +23,6 @@ int	create_connect(const char *ip, const int port)
 	return (sock);
 }
 
-// char *pares(char *str)
-// {
-// 	if (!strncmp(str, "shell", 5))
-// 		return (str + 5);
-// 	else if (!strncmp(str, "help", 4))
-// 		return (strdup("usage: shell \"command\""));
-// 	else
-// 		return (strdup("command not found"));
-// 	return (str);
-// }
-
 int main(int argc , char **argv)
 {
 	(void)argc;
@@ -46,7 +35,7 @@ int main(int argc , char **argv)
     const char *ip = argv[1];
     const int port = atoi(argv[2]);
 	char *message = NULL;
-	char server_reply[2000];
+	char server_reply[MESSAGE_SIZE];
 
 	sock = create_connect(ip, port);
 	if (sock < 0)
@@ -84,22 +73,13 @@ int main(int argc , char **argv)
 			write(1, "command not found\n", 19);
 			continue ;
 		}
-		// else if (!strncmp(server_reply, "disconnect", 10))
-
-		// message = pares(message);
 		bzero(server_reply, strlen(server_reply));
-		if( recv(sock , server_reply , 2000 , 0) < 0)
+		if( recv(sock , server_reply , MESSAGE_SIZE , 0) < 0)
 		{
 			perror("recv failed");
 			break;
 		}
-		// if (!strncmp(server_reply, "disconnect", 10))
-		// {
-		// 	write(1, "Disconnected\n", 14);
-		// 	break;
-		// }
 		write(1, server_reply, strlen(server_reply));
-		// write(1, "\n", 1);
 		free(message);
 		message = NULL;
 	}

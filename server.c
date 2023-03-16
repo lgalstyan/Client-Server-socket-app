@@ -44,6 +44,9 @@ int main(int argc , char **argv, char **env)
 			return (1);
 		}
 		write (1, ESC_GREEN"Client has successfully connected.\n"ESC_WHITE, 54);
+		char ip[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &(client.sin_addr), ip, INET_ADDRSTRLEN);
+        printf("Connected with IP : %s and PORT : %d\n", ip, PORT);
 		childpid = fork();
 		if (childpid == 0)
 		{
@@ -57,21 +60,18 @@ static void	child_proc(int client_desc, char **env)
 {
 	int read_size;
 	char **token;
-	char client_message[2000];
+	char client_message[MESSAGE_SIZE];
 	int	output = dup(1);
-	// int	input = dup(0);
-	// int	error_d = dup(2);
 
 	token = NULL;
-
-	while ((read_size = recv(client_desc, client_message, 2000, 0)) > 0)
+	while ((read_size = recv(client_desc, client_message, MESSAGE_SIZE, 0)) > 0)
 	{
-			token = ft_split(ft_clean_quotes(client_message), ' ');
-			dup2(client_desc, 1);
-			dup2(client_desc, 2);
-			ft_exec(token, env);
-			dup2(1, client_desc);
-			dup2(2, client_desc);
+		token = ft_split(ft_clean_quotes(client_message), ' ');
+		dup2(client_desc, 1);
+		dup2(client_desc, 2);
+		ft_exec(token, env);
+		dup2(1, client_desc);
+		dup2(2, client_desc);
 		free(token);
         bzero(client_message, strlen(client_message));
 	}

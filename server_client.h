@@ -10,6 +10,7 @@
 #include <readline/history.h>
 
 # define PORT               4242
+# define MESSAGE_SIZE       2000
 # define ESC_GREEN          "\001\033[0;32m\002"
 # define ESC_WHITE 		    "\001\033[0;37m\002"
 
