@@ -23,11 +23,6 @@ int	create_connect(const char *ip, const int port)
 	return (sock);
 }
 
-void	handler(int sig)
-{
-	(void)sig;
-
-}
 int main(int argc , char **argv)
 {
 	(void)argc;
@@ -41,13 +36,14 @@ int main(int argc , char **argv)
     const int port = atoi(argv[2]);
 	char *message = NULL;
 	char server_reply[MESSAGE_SIZE];
+	char **token;
 
+	token = NULL;
 	sock = create_connect(ip, port);
 	if (sock < 0)
 		return (1);
 	while(1)
 	{
-		signal(SIGINT, &handler);
 		message = readline(ESC_GREEN "Client> " ESC_WHITE);
 		if (message[0])
 			add_history(message);
@@ -58,7 +54,13 @@ int main(int argc , char **argv)
 		}
 		if (!strncmp(message, "shell", 5))
 		{
-			if( send(sock, message + 6, strlen(message), 0) < 0)
+			token = ft_split_2_part(message, ' ');
+			if (!token[1] || token[1][0] == ' ') 
+			{
+				write(1, "Command not found\n", 19);
+				continue ;
+			}
+			if(token[1] && send(sock, token[1], MESSAGE_SIZE, 0) < 0)
 			{
 				perror("Send failed");
 				return (1);
