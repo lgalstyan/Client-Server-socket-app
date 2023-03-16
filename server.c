@@ -59,20 +59,19 @@ static void	child_proc(int client_desc, char **env)
 	char **token;
 	char client_message[2000];
 	int	output = dup(1);
-	
+	// int	input = dup(0);
+	// int	error_d = dup(2);
+
 	token = NULL;
+
 	while ((read_size = recv(client_desc, client_message, 2000, 0)) > 0)
 	{
-		token = ft_split_2_part(client_message, ' ');
-		if (token[0] && token[1] && !strncmp(token[0], "shell", 5) && token[1][0] == '\"')
-		{
-			char **a = ft_split(ft_clean_quotes(token[1]), ' ');
+			token = ft_split(ft_clean_quotes(client_message), ' ');
 			dup2(client_desc, 1);
-			ft_exec(a, env);
+			dup2(client_desc, 2);
+			ft_exec(token, env);
 			dup2(1, client_desc);
-		}
-		else
-			write(client_desc, client_message, strlen(client_message));
+			dup2(2, client_desc);
 		free(token);
         bzero(client_message, strlen(client_message));
 	}

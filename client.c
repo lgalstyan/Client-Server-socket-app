@@ -21,7 +21,18 @@ int	create_connect(const char *ip, const int port)
 		return (-3);
 	}
 	return (sock);
-}	
+}
+
+// char *pares(char *str)
+// {
+// 	if (!strncmp(str, "shell", 5))
+// 		return (str + 5);
+// 	else if (!strncmp(str, "help", 4))
+// 		return (strdup("usage: shell \"command\""));
+// 	else
+// 		return (strdup("command not found"));
+// 	return (str);
+// }
 
 int main(int argc , char **argv)
 {
@@ -36,7 +47,7 @@ int main(int argc , char **argv)
     const int port = atoi(argv[2]);
 	char *message = NULL;
 	char server_reply[2000];
-	
+
 	sock = create_connect(ip, port);
 	if (sock < 0)
 		return (1);
@@ -50,22 +61,43 @@ int main(int argc , char **argv)
 			free(message);
 			continue ;
 		}
-		if( send(sock, message, strlen(message), 0) < 0)
+		if (!strncmp(message, "shell", 5))
 		{
-			perror("Send failed");
-			return (1);
+			if( send(sock, message + 6, strlen(message), 0) < 0)
+			{
+				perror("Send failed");
+				return (1);
+			}
 		}
+		else if (!strncmp(message, "help", 4))
+		{
+			write(1, "usage: shell \"command\"\n", 24);
+			continue ;
+		}
+		else if (!strncmp(message, "disconnect", 10))
+		{
+			write(1, "Disconnected\n", 14);
+			break;
+		}
+		else
+		{
+			write(1, "command not found\n", 19);
+			continue ;
+		}
+		// else if (!strncmp(server_reply, "disconnect", 10))
+
+		// message = pares(message);
 		bzero(server_reply, strlen(server_reply));
 		if( recv(sock , server_reply , 2000 , 0) < 0)
 		{
 			perror("recv failed");
 			break;
 		}
-		if (!strncmp(server_reply, "disconnect", 10))
-		{
-			write(1, "Disconnected\n", 14);
-			break;
-		}
+		// if (!strncmp(server_reply, "disconnect", 10))
+		// {
+		// 	write(1, "Disconnected\n", 14);
+		// 	break;
+		// }
 		write(1, server_reply, strlen(server_reply));
 		// write(1, "\n", 1);
 		free(message);
