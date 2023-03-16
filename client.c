@@ -23,6 +23,11 @@ int	create_connect(const char *ip, const int port)
 	return (sock);
 }
 
+void	handler(int sig)
+{
+	(void)sig;
+
+}
 int main(int argc , char **argv)
 {
 	(void)argc;
@@ -42,6 +47,7 @@ int main(int argc , char **argv)
 		return (1);
 	while(1)
 	{
+		signal(SIGINT, &handler);
 		message = readline(ESC_GREEN "Client> " ESC_WHITE);
 		if (message[0])
 			add_history(message);
@@ -60,7 +66,7 @@ int main(int argc , char **argv)
 		}
 		else if (!strncmp(message, "help", 4))
 		{
-			write(1, "usage: shell \"command\"\n", 24);
+			write(1, "usage :  shell \"command\"\nfinish:  disconnect\n", 45);
 			continue ;
 		}
 		else if (!strncmp(message, "disconnect", 10))
@@ -70,7 +76,7 @@ int main(int argc , char **argv)
 		}
 		else
 		{
-			write(1, "command not found\n", 19);
+			write(1, "Command not found\n", 19);
 			continue ;
 		}
 		bzero(server_reply, strlen(server_reply));

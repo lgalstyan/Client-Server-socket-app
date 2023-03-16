@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h>
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <stdio.h>

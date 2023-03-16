@@ -12,6 +12,7 @@ int main(int argc , char **argv, char **env)
 	struct sockaddr_in client;
 	int c;
 	int childpid;
+	char ip[INET_ADDRSTRLEN];
 
 	c = sizeof(struct sockaddr_in);
 	socket_desc = socket(AF_INET , SOCK_STREAM , IPPROTO_TCP);
@@ -44,7 +45,6 @@ int main(int argc , char **argv, char **env)
 			return (1);
 		}
 		write (1, ESC_GREEN"Client has successfully connected.\n"ESC_WHITE, 54);
-		char ip[INET_ADDRSTRLEN];
         inet_ntop(AF_INET, &(client.sin_addr), ip, INET_ADDRSTRLEN);
         printf("Connected with IP : %s and PORT : %d\n", ip, PORT);
 		childpid = fork();
