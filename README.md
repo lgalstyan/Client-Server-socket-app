@@ -43,7 +43,9 @@ Client Requirements:
 
   ## USAGE
 
-  1)make
+  1)make install 
+
+  2)make re
 
   if 'readline/readline.h' file not found
   install this
