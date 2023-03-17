@@ -5,8 +5,8 @@ SRCS 		= $(wildcard ./*.c)
 OBJS		= $(patsubst ./%.c, ./%.o, $(SRCS))
 GCC 		= gcc
 CFLAGS		= -Wall -Werror -Wextra
-LINKER		= -L./readline_larisa/lib -lreadline
-INCLUDE		= -I. -I ./readline_larisa/include
+#LINKER		= -L./readline_larisa/lib -lreadline
+INCLUDE		= -I. # -I ./readline_larisa/include
 READFL 	 	= -lreadline
 RD			= ${shell find ${HOME} -name readline_larisa 2>/dev/null}
 RM			= rm -rf
@@ -22,7 +22,7 @@ $(SERVER) : ${OBJS}
 
 
 $(CLIENT) : $(OBJS)
-	@$(GCC) $(CFLAGS) ${READFL} utils.o client.o ${LINKER} -o $(CLIENT)
+	@$(GCC) $(CFLAGS) ${READFL} utils.o client.o -o $(CLIENT)
 	@echo "$(GRN)$(NAME) Client compiled$(DEF)"
 
 clean :
