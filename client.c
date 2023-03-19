@@ -28,19 +28,8 @@ int	second_hook(void)
 	return (0);
 }
 
-void	handler(int sig)
-{
-	(void)sig;
-	rl_replace_line("", 0);
-	rl_done = 1;
-}
-
 int main(int argc , char **argv)
 {
-	rl_catch_signals = 0;
-	rl_event_hook = second_hook;
-	rl_done = 1;
-	signal(SIGINT, &handler);
 	(void)argc;
 	if (argc != 3)
 	{
